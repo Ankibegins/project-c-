@@ -1,0 +1,210 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Account {
+public:
+    int accountNumber;
+    string name;
+    string address;
+    double balance;
+
+    // Constructor to initialize account
+    Account() {
+        accountNumber = 0;
+        name = "";
+        address = "";
+        balance = 0.0;
+    }
+};
+
+class BankingSystem {
+private:
+    Account accounts[100];  // Array to hold a maximum of 100 accounts
+    int accountCounter = 1001; // Starting account number
+    int accountCount = 0;  // To keep track of number of accounts
+
+public:
+    // Declaration of functions
+    void addAccount();
+    void displayAccounts();
+    void deleteAccount();
+    void addAmount();
+    void withdrawAmount();
+    void menu();
+};
+
+// Function to add a new account
+void BankingSystem::addAccount() {
+    if (accountCount >= 100) {
+        cout << "Account limit reached. Cannot create more accounts.\n";
+        return;
+    }
+
+    string name, address;
+    double initialDeposit;
+
+    cout << "Enter Name: ";
+    cin.ignore(); // To clear the buffer
+    getline(cin, name);
+
+    cout << "Enter Address: ";
+    getline(cin, address);
+
+    cout << "Enter Initial Deposit: ";
+    cin >> initialDeposit;
+
+    accounts[accountCount].accountNumber = accountCounter++;
+    accounts[accountCount].name = name;
+    accounts[accountCount].address = address;
+    accounts[accountCount].balance = initialDeposit;
+
+    accountCount++;
+
+    cout << "Account created successfully. Your Account No. is " << accounts[accountCount - 1].accountNumber << endl;
+}
+
+// Function to display all accounts
+void BankingSystem::displayAccounts() {
+    if (accountCount == 0) {
+        cout << "No accounts available.\n";
+        return;
+    }
+
+    cout << "\nAccount Details:\n";
+    for (int i = 0; i < accountCount; i++) {
+        cout << "Account No: " << accounts[i].accountNumber << "\n";
+        cout << "Name: " << accounts[i].name << "\n";
+        cout << "Address: " << accounts[i].address << "\n";
+        cout << "Balance: " << accounts[i].balance << "\n";
+        cout << "--------------------------\n";
+    }
+}
+
+// Function to delete an account by account number
+void BankingSystem::deleteAccount() {
+    int accNo;
+    cout << "Enter Account No. to delete: ";
+    cin >> accNo;
+
+    int index = -1;
+    for (int i = 0; i < accountCount; i++) {
+        if (accounts[i].accountNumber == accNo) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index != -1) {
+        // Shift all accounts after the deleted account to fill the gap
+        for (int i = index; i < accountCount - 1; i++) {
+            accounts[i] = accounts[i + 1];
+        }
+        accountCount--;
+        cout << "Account with Account No. " << accNo << " deleted successfully.\n";
+    } else {
+        cout << "Account with Account No. " << accNo << " not found.\n";
+    }
+}
+
+// Function to add amount to an account
+void BankingSystem::addAmount() {
+    int accNo;
+    double amount;
+    cout << "Enter Account No.: ";
+    cin >> accNo;
+
+    int index = -1;
+    for (int i = 0; i < accountCount; i++) {
+        if (accounts[i].accountNumber == accNo) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index != -1) {
+        cout << "Enter amount to deposit: ";
+        cin >> amount;
+        accounts[index].balance += amount;
+        cout << "Amount deposited successfully. New balance is: " << accounts[index].balance << endl;
+    } else {
+        cout << "Account with Account No. " << accNo << " not found.\n";
+    }
+}
+
+// Function to withdraw amount from an account
+void BankingSystem::withdrawAmount() {
+    int accNo;
+    double amount;
+    cout << "Enter Account No.: ";
+    cin >> accNo;
+
+    int index = -1;
+    for (int i = 0; i < accountCount; i++) {
+        if (accounts[i].accountNumber == accNo) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index != -1) {
+        cout << "Enter amount to withdraw: ";
+        cin >> amount;
+
+        if (amount > accounts[index].balance) {
+            cout << "Insufficient funds! Current balance: " << accounts[index].balance << endl;
+        } else {
+            accounts[index].balance -= amount;
+            cout << "Amount withdrawn successfully. New balance is: " << accounts[index].balance << endl;
+        }
+    } else {
+        cout << "Account with Account No. " << accNo << " not found.\n";
+    }
+}
+
+// Function to show the menu and handle user input
+void BankingSystem::menu() {
+    int choice;
+
+    do {
+        cout << "\nBanking System Menu:\n";
+        cout << "1. Add Account\n";
+        cout << "2. Display Accounts\n";
+        cout << "3. Delete Account\n";
+        cout << "4. Add Amount\n";
+        cout << "5. Withdraw Amount\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                addAccount();
+                break;
+            case 2:
+                displayAccounts();
+                break;
+            case 3:
+                deleteAccount();
+                break;
+            case 4:
+                addAmount();
+                break;
+            case 5:
+                withdrawAmount();
+                break;
+            case 6:
+                cout << "Exiting the system.\n";
+                break;
+            default:
+                cout << "Invalid choice! Please try again.\n";
+        }
+    } while (choice != 6);
+}
+
+int main() {
+    BankingSystem bank;
+    bank.menu();
+    return 0;
+}
